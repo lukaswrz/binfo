@@ -136,6 +136,14 @@ func Get() (Binfo, error) {
 	return b, merr.ErrorOrNil()
 }
 
+func MustGet() Binfo {
+	b, err := Get()
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
 type SummaryMode uint
 
 const (
