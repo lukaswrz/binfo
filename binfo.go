@@ -147,58 +147,66 @@ const (
 	ModeNamed
 )
 
-func (b Binfo) Summarize(program string, mode SummaryMode) string {
+func (b Binfo) Summarize(name string, mode SummaryMode) string {
 	wants := func(test SummaryMode) bool {
 		return mode&test == test
 	}
 
-	sep := ", "
+	var (
+		brk string
+		sep string
+	)
+
 	if wants(ModeMultiline) {
+		brk = "\n"
 		sep = "\n"
+	} else {
+		brk = " "
+		sep = ", "
 	}
 
-	parts := make([]string, 4)
+	lines := make([]string, 4)
 
 	if wants(ModeModule) {
-		parts = append(
-			parts,
+		lines = append(
+			lines,
 			fmt.Sprintf("module %s (%s) (sum %s)", b.Module.Path, b.Module.Version, b.Module.Sum),
 		)
 	}
 
 	if wants(ModeBuild) {
-		parts = append(
-			parts,
+		lines = append(
+			lines,
 			fmt.Sprintf("built with %s (%s) (mode %s)", b.Build.Compiler, b.Build.GoVersion, b.Build.Mode),
 		)
 	}
 
 	if wants(ModeCGO) {
 		if b.CGO.Enabled {
-			parts = append(
-				parts,
+			lines = append(
+				lines,
 				fmt.Sprintf("with cgo (c %q) (cpp %q) (cxx %q) (ld %q)", b.CGO.Flags.C, b.CGO.Flags.CPP, b.CGO.Flags.CXX, b.CGO.Flags.LD),
 			)
 		} else {
-			parts = append(
-				parts,
+			lines = append(
+				lines,
 				"without cgo",
 			)
 		}
 	}
 
 	if wants(ModeVCS) {
-		parts = append(
-			parts,
+		lines = append(
+			lines,
 			fmt.Sprintf("via %s (rev %s) (at %s)", b.VCS.Name, b.VCS.Revision, b.VCS.Time.Format("2006-01-02 15:04:05")),
 		)
 	}
 
-	j := strings.Join(parts, sep)
+	j := strings.Join(lines, sep)
 
-	if program == "" {
+	if name == "" {
 		return j
 	} else {
-		return fmt.Sprintf("%s:%s%s", program, sep, j)
+		return fmt.Sprintf("%s:%s%s", name, brk, j)
 	}
 }
