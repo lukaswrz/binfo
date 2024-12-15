@@ -1,7 +1,7 @@
 package binfo
 
 import (
-	"embed"
+	_ "embed"
 	"fmt"
 	"strings"
 	"text/template"
