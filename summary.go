@@ -18,13 +18,18 @@ const (
 )
 
 type params struct {
+	Name    string
+	Version string
+
 	Module bool
 	Build  bool
 	CGO    bool
 	VCS    bool
-	Brk    string
-	Sep    string
-	I      Binfo
+
+	Brk string
+	Sep string
+
+	I Binfo
 }
 
 //go:embed summary.tmpl
