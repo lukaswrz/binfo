@@ -26,6 +26,8 @@ func Get() (Binfo, error) {
 	b.Module.Path = o.Main.Path
 	b.Module.Sum = o.Main.Sum
 
+	b.Build.GoVersion = o.GoVersion
+
 	for _, setting := range o.Settings {
 		switch setting.Key {
 		case "-buildmode":

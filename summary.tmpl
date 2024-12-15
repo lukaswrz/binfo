@@ -29,6 +29,12 @@
 
 {{- .Sep -}}
 
-{{- if and .VCS (ne .I.VCS.Name "") -}}
-	vcs {{ .I.VCS.Name }} (rev {{ .I.VCS.Revision }}) (at {{ .I.VCS.Time.Format "2006-01-02 15:04:05" }}){{- if .I.VCS.Modified }} (modified){{- end -}}
+{{- if .VCS -}}
+	{{- $time := .I.VCS.Time.Format "2006-01-02 15:04:05" -}}
+
+	vcs
+	{{- if ne .I.VCS.Name "" }} {{ .I.VCS.Name }}{{- end -}}
+	{{- if ne .I.VCS.Revision "" }} (revision {{ .I.VCS.Revision }}){{- end -}}
+	{{- if ne $time "" }} (at {{ $time }}){{- end -}}
+	{{- if .I.VCS.Modified }} (modified){{- end -}}
 {{- end -}}
