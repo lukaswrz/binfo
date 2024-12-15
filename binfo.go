@@ -144,6 +144,7 @@ const (
 	ModeCGO
 	ModeVCS
 	ModeMultiline
+	ModeNamed
 )
 
 func (b Binfo) Summarize(program string, mode SummaryMode) string {
@@ -193,5 +194,11 @@ func (b Binfo) Summarize(program string, mode SummaryMode) string {
 		)
 	}
 
-	return fmt.Sprintf("%s:%s%s", program, sep, strings.Join(parts, sep))
+	j := strings.Join(parts, sep)
+
+	if program == "" {
+		return j
+	} else {
+		return fmt.Sprintf("%s:%s%s", program, sep, j)
+	}
 }
