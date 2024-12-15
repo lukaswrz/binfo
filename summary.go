@@ -1,8 +1,10 @@
 package binfo
 
 import (
+	"embed"
 	"fmt"
 	"strings"
+	"text/template"
 )
 
 type SummaryMode uint
@@ -15,7 +17,20 @@ const (
 	ModeMultiline
 )
 
-func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
+type params struct {
+	Module bool
+	Build  bool
+	CGO    bool
+	VCS    bool
+	Brk    string
+	Sep    string
+	I      Binfo
+}
+
+//go:embed summary.tmpl
+var st string
+
+func (b Binfo) Summarize(name string, version string, mode SummaryMode) (string, error) {
 	wants := func(test SummaryMode) bool {
 		return mode&test == test
 	}
@@ -33,55 +48,31 @@ func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 		sep = ", "
 	}
 
-	lines := make([]string, 0, 4)
-
-	if wants(ModeModule) {
-		lines = append(
-			lines,
-			fmt.Sprintf("module %s (%s) (sum %s)", b.Module.Path, b.Module.Version, b.Module.Sum),
-		)
+	t, err := template.New("").Parse(st)
+	if err != nil {
+		return "", fmt.Errorf("cannot parse summary template: %w", err)
+	}
+	sb := new(strings.Builder)
+	err = t.Execute(sb, params{
+		Module: wants(ModeModule),
+		Build:  wants(ModeBuild),
+		CGO:    wants(ModeCGO),
+		VCS:    wants(ModeVCS),
+		Brk:    brk,
+		Sep:    sep,
+		I:      b,
+	})
+	if err != nil {
+		return "", fmt.Errorf("cannot execute summary template: %w", err)
 	}
 
-	if wants(ModeBuild) {
-		lines = append(
-			lines,
-			fmt.Sprintf("built with %s (%s) (mode %s)", b.Build.Compiler, b.Build.GoVersion, b.Build.Mode),
-		)
+	return sb.String(), nil
+}
+
+func (b Binfo) MustSummarize(name string, version string, mode SummaryMode) string {
+	s, err := b.Summarize(name, version, mode)
+	if err != nil {
+		panic(err)
 	}
-
-	if wants(ModeCGO) {
-		if b.CGO.Enabled {
-			lines = append(
-				lines,
-				fmt.Sprintf("with cgo (c %q) (cpp %q) (cxx %q) (ld %q)", b.CGO.Flags.C, b.CGO.Flags.CPP, b.CGO.Flags.CXX, b.CGO.Flags.LD),
-			)
-		} else {
-			lines = append(
-				lines,
-				"without cgo",
-			)
-		}
-	}
-
-	if wants(ModeVCS) {
-		var m string
-		if b.VCS.Modified {
-			m = " (modified)"
-		} else {
-			m = ""
-		}
-
-		lines = append(
-			lines,
-			fmt.Sprintf("via %s (rev %s) (at %s)%s", b.VCS.Name, b.VCS.Revision, b.VCS.Time.Format("2006-01-02 15:04:05"), m),
-		)
-	}
-
-	j := strings.Join(lines, sep)
-
-	if name == "" {
-		return j
-	} else {
-		return fmt.Sprintf("%s %s:%s%s", name, version, brk, j)
-	}
+	return s
 }

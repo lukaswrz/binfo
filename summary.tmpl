@@ -1,0 +1,29 @@
+{{- if ne .Name "" -}}
+	{{ .Name }}{{ if ne .Version "" }} {{ .Version }}{{ end }}{{ .Brk }}
+{{- end -}}
+
+{{- if .Module -}}
+	module {{ .I.Module.Path }} ({{ I.Module.Version }}) (sum {{ .I.Module.Sum }})
+{{- end -}}
+
+{{- .Sep -}}
+
+{{- if .Build -}}
+	built with {{ .I.Build.Compiler }} ({{ I.Build.GoVersion }}) (mode {{ .I.Build.Mode }})
+{{- end -}}
+
+{{- .Sep -}}
+
+{{- if .CGO -}}
+	{{- if .I.CGO.Enabled -}}
+		with cgo (c "{{ .I.CGO.Flags.C }}") (cpp "{{ I.CGO.Flags.CPP }}") (cxx "{{ .I.CGO.Flags.CXX }}") (ld "{{ .I.CGO.Flags.LD }}")
+	{{- else -}}
+		without cgo
+	{{- end -}}
+{{- end -}}
+
+{{- .Sep -}}
+
+{{- if .VCS -}}
+	via {{ .I.VCS.Name }} (rev {{ .I.VCS.Revision }}) (at {{ .I.VCS.Time.Format "2006-01-02 15:04:05" }}){{- if .I.VCS.Modified -}} (modified){{- end -}}
+{{- end -}}
