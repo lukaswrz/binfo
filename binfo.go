@@ -152,10 +152,9 @@ const (
 	ModeCGO
 	ModeVCS
 	ModeMultiline
-	ModeNamed
 )
 
-func (b Binfo) Summarize(name string, mode SummaryMode) string {
+func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 	wants := func(test SummaryMode) bool {
 		return mode&test == test
 	}
@@ -215,6 +214,6 @@ func (b Binfo) Summarize(name string, mode SummaryMode) string {
 	if name == "" {
 		return j
 	} else {
-		return fmt.Sprintf("%s:%s%s", name, brk, j)
+		return fmt.Sprintf("%s %s:%s%s", name, version, brk, j)
 	}
 }
