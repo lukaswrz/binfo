@@ -33,7 +33,7 @@ func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 		sep = ", "
 	}
 
-	lines := make([]string, 4)
+	lines := make([]string, 0, 4)
 
 	if wants(ModeModule) {
 		lines = append(
@@ -64,9 +64,16 @@ func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 	}
 
 	if wants(ModeVCS) {
+		var m string
+		if b.VCS.Modified {
+			m = " (modified)"
+		} else {
+			m = ""
+		}
+
 		lines = append(
 			lines,
-			fmt.Sprintf("via %s (rev %s) (at %s)", b.VCS.Name, b.VCS.Revision, b.VCS.Time.Format("2006-01-02 15:04:05")),
+			fmt.Sprintf("via %s (rev %s) (at %s)%s", b.VCS.Name, b.VCS.Revision, b.VCS.Time.Format("2006-01-02 15:04:05"), m),
 		)
 	}
 
