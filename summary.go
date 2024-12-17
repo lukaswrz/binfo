@@ -57,13 +57,18 @@ func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 
 	sb := new(strings.Builder)
 	err := t.Execute(sb, params{
+		Name:    name,
+		Version: version,
+
 		Module: wants(Module),
 		Build:  wants(Build),
 		CGO:    wants(CGO),
 		VCS:    wants(VCS),
-		Brk:    brk,
-		Sep:    sep,
-		I:      b,
+
+		Brk: brk,
+		Sep: sep,
+
+		I: b,
 	})
 	if err != nil {
 		return ""
