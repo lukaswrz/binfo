@@ -31,8 +31,11 @@ type params struct {
 	I Binfo
 }
 
-//go:embed summary.tmpl
-var st string
+var (
+	//go:embed summary.tmpl
+	st   string
+	t, _ = template.New("").Parse(st)
+)
 
 func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 	wants := func(test SummaryMode) bool {
@@ -52,12 +55,8 @@ func (b Binfo) Summarize(name string, version string, mode SummaryMode) string {
 		sep = ", "
 	}
 
-	t, err := template.New("").Parse(st)
-	if err != nil {
-		return ""
-	}
 	sb := new(strings.Builder)
-	err = t.Execute(sb, params{
+	err := t.Execute(sb, params{
 		Module: wants(Module),
 		Build:  wants(Build),
 		CGO:    wants(CGO),
