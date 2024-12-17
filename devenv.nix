@@ -1,6 +1,8 @@
 {
   languages.go.enable = true;
 
+  # TODO test
+
   pre-commit.hooks = {
     # Go
     gotest.enable = true;
