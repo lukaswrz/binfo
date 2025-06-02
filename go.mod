@@ -1,4 +1,4 @@
-module github.com/lukaswrz/binfo
+module codeberg.org/helvetica/binfo
 
 go 1.23.3
 
