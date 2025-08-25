@@ -1,4 +1,4 @@
-module codeberg.org/helvetica/binfo
+module forgejo.helveticanonstandard.net/helvetica/binfo
 
 go 1.23.3
 
