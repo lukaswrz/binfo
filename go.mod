@@ -1,4 +1,4 @@
-module forgejo.helveticanonstandard.net/helvetica/binfo
+module hack.helveticanonstandard.net/helvetica/binfo
 
 go 1.23.3
 
