@@ -1,0 +1,40 @@
+{{- if ne .Name "" -}}
+	{{ .Name }}{{ if ne .Version "" }} {{ .Version }}{{ end }}
+	{{- .Brk -}}
+{{- end -}}
+
+{{- if .Module -}}
+	module {{ .I.Module.Path }} {{ .I.Module.Version }}{{ if ne .I.Module.Sum "" }} {{ .I.Module.Sum }}{{ end }}
+{{- end -}}
+
+{{- .Sep -}}
+
+{{- if .Build -}}
+	built with {{ .I.Build.Compiler }} ({{ .I.Build.GoVersion }}) ({{ .I.Build.Mode }})
+{{- end -}}
+
+{{- .Sep -}}
+
+{{- if .CGO -}}
+	{{- if .I.CGO.Enabled -}}
+		with cgo
+		{{- if ne .I.CGO.Flags.C "" }} (c {{ .I.CGO.Flags.C }}){{- end -}}
+		{{- if ne .I.CGO.Flags.CPP "" }} (cpp {{ .I.CGO.Flags.CPP }}){{- end -}}
+		{{- if ne .I.CGO.Flags.CXX "" }} (cxx {{ .I.CGO.Flags.CXX }}){{- end -}}
+		{{- if ne .I.CGO.Flags.LD "" }} (ld {{ .I.CGO.Flags.LD }}){{- end -}}
+	{{- else -}}
+		without cgo
+	{{- end -}}
+{{- end -}}
+
+{{- .Sep -}}
+
+{{- if .VCS -}}
+	{{- $time := .I.VCS.Time.Format "2006-01-02 15:04:05" -}}
+
+	vcs
+	{{- if ne .I.VCS.Name "" }} {{ .I.VCS.Name }}{{- end -}}
+	{{- if ne .I.VCS.Revision "" }} (revision {{ .I.VCS.Revision }}){{- end -}}
+	{{- if ne $time "" }} (at {{ $time }}){{- end -}}
+	{{- if .I.VCS.Modified }} (modified){{- end -}}
+{{- end -}}
